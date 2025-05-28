@@ -7,11 +7,8 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$DIR"
 
-# Verificar si python3 está disponible
-if ! command -v python3 &> /dev/null; then
-    echo "Error: python3 no está instalado. Por favor, instálelo."
-    exit 1
-fi
+# Nombre del directorio del entorno virtual
+VENV_DIR="venv"
 
 # Verificar si existe el archivo principal
 if [ ! -f "binance_usdt_rates.py" ]; then
@@ -19,12 +16,22 @@ if [ ! -f "binance_usdt_rates.py" ]; then
     exit 1
 fi
 
-# Establecer permisos de ejecución si es necesario
-chmod +x binance_usdt_rates.py
+# Verificar si existe el entorno virtual y el ejecutable de Python
+PYTHON_EXEC="$DIR/$VENV_DIR/bin/python"
+if [ ! -f "$PYTHON_EXEC" ]; then
+    echo "Error: No se encuentra el interprete de Python en el entorno virtual $VENV_DIR."
+    echo "Por favor, asegurese de crear el entorno virtual (python3 -m venv $VENV_DIR)"
+    echo "y de que la ruta \"$PYTHON_EXEC\" es correcta."
+    echo "Luego, active el entorno (source $VENV_DIR/bin/activate) e instale las dependencias (pip install -r requirements.txt)."
+    exit 1
+fi
 
-# Ejecutar el script
-echo "Ejecutando binance_usdt_rates.py en $(date)"
-python3 binance_usdt_rates.py
+# Establecer permisos de ejecución si es necesario (aunque se llama con python directamente)
+# chmod +x binance_usdt_rates.py
+
+# Ejecutar el script usando el Python del venv
+echo "Ejecutando binance_usdt_rates.py con $PYTHON_EXEC en $(date)"
+"$PYTHON_EXEC" binance_usdt_rates.py
 
 # Verificar el resultado
 if [ $? -eq 0 ]; then

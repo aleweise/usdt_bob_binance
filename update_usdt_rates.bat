@@ -15,8 +15,16 @@ if not exist binance_usdt_rates.py (
     exit /b 1
 )
 
-REM Ejecutar script
-python binance_usdt_rates.py
+REM Verificar si existe el entorno virtual y el ejecutable de Python
+if not exist "%~dp0venv\Scripts\python.exe" (
+    echo ERROR: No se encuentra el interprete de Python en el entorno virtual venv.
+    echo Por favor, asegurese de crear el entorno virtual (python -m venv venv)
+    echo y de que la ruta "%~dp0venv\Scripts\python.exe" es correcta.
+    exit /b 1
+)
+
+REM Ejecutar script usando el Python del venv
+"%~dp0venv\Scripts\python.exe" binance_usdt_rates.py
 
 REM Verificar resultado
 if %errorlevel% equ 0 (
