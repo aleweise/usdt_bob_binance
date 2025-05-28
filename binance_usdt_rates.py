@@ -64,7 +64,7 @@ def get_binance_rates():
     Obtiene el precio más barato de USDT en BOB desde Binance P2P
     
     Returns:
-        dict: Containing 'cheapest_rate' and 'average_rate', or None if an error occurs.
+        dict: Containing 'usdt_min_bob' and 'usdt_avg_bob', or None if an error occurs.
     """
     url = "https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search"
     
@@ -97,12 +97,12 @@ def get_binance_rates():
         cheapest = min(prices)
         average = sum(prices) / len(prices)
         
-        logger.info(f"Cheapest rate: Bs. {cheapest}")
-        logger.info(f"Average rate: Bs. {average:.2f}")
+        logger.info(f"Cheapest rate (usdt_min_bob): Bs. {cheapest}")
+        logger.info(f"Average rate (usdt_avg_bob): Bs. {average:.2f}")
         
         return {
-            "cheapest_rate": cheapest,
-            "average_rate": average
+            "usdt_min_bob": cheapest,
+            "usdt_avg_bob": average
         }
     
     except requests.exceptions.RequestException as e:
@@ -117,7 +117,7 @@ def save_to_database(rates_data, db_config):
     Guarda los datos en la base de datos MySQL
     
     Args:
-        rates_data (dict): Datos de precios a guardar (debe contener 'cheapest_rate' y 'average_rate')
+        rates_data (dict): Datos de precios a guardar (debe contener 'usdt_min_bob' y 'usdt_avg_bob')
         db_config (dict): Configuración de la base de datos
     
     Returns:
@@ -155,14 +155,14 @@ def save_to_database(rates_data, db_config):
         # Insertar datos
         query = """
         INSERT INTO usdt_rates 
-        (recorded_at, usdt_to_bob_rate, average_usdt_to_bob_rate) 
+        (recorded_at, usdt_min_bob, usdt_avg_bob) 
         VALUES (%s, %s, %s)
         """
         
         cursor.execute(query, (
             current_time, 
-            rates_data['cheapest_rate'], 
-            rates_data['average_rate']
+            rates_data['usdt_min_bob'], 
+            rates_data['usdt_avg_bob']
         ))
         
         conn.commit()

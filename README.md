@@ -8,8 +8,8 @@ Este proyecto automatiza la captura del precio más barato y el precio promedio 
 
 ## ✨ Características principales
 
-- ✅ Captura del precio más barato de USDT en BOB (`usdt_to_bob_rate`)
-- 📊 Registro del precio promedio de los anuncios disponibles (`average_usdt_to_bob_rate`)
+- ✅ Captura del precio más barato de USDT en BOB (`usdt_min_bob`)
+- 📊 Registro del precio promedio de los anuncios disponibles (`usdt_avg_bob`)
 - 🔄 Automatización para ejecución periódica (cada hora)
 - 📝 Sistema de logs para monitoreo
 - 🛡️ Manejo de errores con reintentos
@@ -62,12 +62,12 @@ El script creará automáticamente la tabla si no existe. También puedes crearl
 
 La tabla `usdt_rates` tiene la siguiente estructura:
 
-| Campo                      | Tipo         | Descripción                              |
-|----------------------------|--------------|------------------------------------------|
-| id                         | INT          | Clave primaria autoincremental           |
-| recorded_at                | DATETIME     | Momento exacto de la captura             |
-| usdt_to_bob_rate           | DECIMAL(10,2)| Precio más barato de USDT en BOB         |
-| average_usdt_to_bob_rate   | DECIMAL(10,2)| Promedio de precios disponibles          |
+| Campo          | Tipo         | Descripción                              |
+|----------------|--------------|------------------------------------------|
+| id             | INT          | Clave primaria autoincremental           |
+| recorded_at    | DATETIME     | Momento exacto de la captura             |
+| usdt_min_bob   | DECIMAL(10,2)| Precio más barato de USDT en BOB         |
+| usdt_avg_bob   | DECIMAL(10,2)| Promedio de precios disponibles          |
 
 ## 🔄 Uso
 
@@ -105,7 +105,7 @@ Para ejecutar cada hora, añade a tu crontab:
 
 ```sql
 -- Ver los últimos 10 registros
-SELECT recorded_at, usdt_to_bob_rate, average_usdt_to_bob_rate 
+SELECT recorded_at, usdt_min_bob, usdt_avg_bob 
 FROM usdt_rates 
 ORDER BY recorded_at DESC 
 LIMIT 10;
