@@ -16,9 +16,10 @@ if [ ! -f "binance_usdt_rates.py" ]; then
     exit 1
 fi
 
+
 # Verificar si existe el entorno virtual y el ejecutable de Python
-PYTHON_EXEC="$DIR/$VENV_DIR/bin/python"
-if [ ! -f "$PYTHON_EXEC" ]; then
+PYTHON_EXEC="$DIR/$VENV_DIR/bin/python" # This line is kept for the check
+if [ ! -f "$PYTHON_EXEC" ]; then # The check still uses PYTHON_EXEC
     echo "Error: No se encuentra el interprete de Python en el entorno virtual $VENV_DIR."
     echo "Por favor, asegurese de crear el entorno virtual (python3 -m venv $VENV_DIR)"
     echo "y de que la ruta \"$PYTHON_EXEC\" es correcta."
@@ -29,9 +30,15 @@ fi
 # Establecer permisos de ejecución si es necesario (aunque se llama con python directamente)
 # chmod +x binance_usdt_rates.py
 
+# Activar el entorno virtual
+source "$DIR/$VENV_DIR/bin/activate"
+
 # Ejecutar el script usando el Python del venv
-echo "Ejecutando binance_usdt_rates.py con $PYTHON_EXEC en $(date)"
-"$PYTHON_EXEC" binance_usdt_rates.py
+echo "Ejecutando binance_usdt_rates.py con Python del venv en $(date)" # Modified echo
+python binance_usdt_rates.py
+
+# Desactivar el entorno virtual (opcional, pero buena práctica)
+deactivate
 
 # Verificar el resultado
 if [ $? -eq 0 ]; then
