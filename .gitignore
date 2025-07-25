@@ -1,16 +1,90 @@
-# Python virtual environment
+# Configuración de base de datos (contiene credenciales sensibles)
+db_config.ini
+
+# Entorno virtual de Python
 venv/
+env/
+.venv/
+.env/
 
-# Python cache files
+# Archivos de Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# IDE and editor specific files
+# Logs
+*.log
+binance_usdt_rates.log
+converter.log
+usdt_cron.log
+
+# Base de datos local (si usas SQLite)
+*.db
+*.sqlite
+*.sqlite3
+
+# Archivos de sistema
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDEs
 .vscode/
 .idea/
 *.swp
 *.swo
-*.log
-db_config.ini
+*~
+
+# Archivos temporales
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Archivos de configuración local
+config.local.ini
+.env.local
+
+# Archivos de test
+.coverage
+.pytest_cache/
+.tox/
+.nox/
+
+# Documentación generada
+docs/_build/
+
+# Archivos de Flask
+instance/
+.webassets-cache
+
+# Archivos de certificados SSL (si los usas)
+*.pem
+*.key
+*.crt
+
+# Archivos de backup de base de datos
+*.sql.backup
+*.dump
