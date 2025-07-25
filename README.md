@@ -28,7 +28,7 @@ Este proyecto automatiza la captura del precio más barato y el precio promedio 
 1. **Clonar el repositorio**
 
 ```bash
-git clone https://github.com/tu-usuario/binance-usdt-bob-tracker.git
+git clone https://github.com/aleweise/binance-usdt-bob-tracker.git
 cd binance-usdt-bob-tracker
 ```
 
