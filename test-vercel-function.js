@@ -1,10 +1,10 @@
 // Script para probar la función de Vercel localmente
-import handler from './api/binance-proxy.js';
+const handler = require('./api/binance-proxy.js').default;
 
 async function testVercelFunction() {
-    console.log('🧪 Probando función de Vercel...');
+    console.log('🧪 Probando función Vercel binance-proxy...');
     
-    // Mock request object
+    // Mock de request y response para Vercel
     const req = {
         method: 'POST',
         body: {
@@ -18,7 +18,6 @@ async function testVercelFunction() {
         }
     };
     
-    // Mock response object
     const res = {
         headers: {},
         statusCode: 200,
@@ -64,8 +63,8 @@ async function testVercelFunction() {
 }
 
 // Ejecutar si se llama directamente
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (require.main === module) {
     testVercelFunction();
 }
 
-export { testVercelFunction };
+module.exports = { testVercelFunction };

@@ -1,247 +1,240 @@
 # 🚀 Despliegue en Vercel - Convertidor BOB → USDT
 
-Guía completa para desplegar el convertidor en Vercel con datos reales de Binance P2P usando Vercel Serverless Functions.
+Guía completa para desplegar el convertidor en Vercel con funciones serverless y datos reales de Binance P2P.
 
 ## 📋 Archivos para Vercel
 
 ### **Archivos Principales:**
-- `static-app.html` - Aplicación principal (punto de entrada)
+- `vercel-app.html` - Aplicación principal optimizada para Vercel
 - `vercel.json` - Configuración de Vercel
-- `api/binance-proxy.js` - Vercel Serverless Function
-- `static/` - Recursos estáticos (CSS, JS, imágenes)
+- `api/binance-proxy.js` - Función serverless de Vercel
+- `static/js/binance-api-universal.js` - Cliente uni
 
-### **Configuración Específica:**
-- `api/` - Directorio de Vercel Serverless Functions
-- `test-vercel-function.js` - Script de prueba para función local
+### **Estructura del Proyecto:**
+```
+├── api/
+ion
+├── static/
+
+│   └── js/binance-api-universal.js l
+├── vercel-app.html              cel
+├── vercel.json                   # Configuracel
+├── package.json         
+└── test-vercel-function.js    es
+```
 
 ## 🌐 Configuración de Vercel
 
-### **1. Configuración Automática:**
+### **1. Configuración **
 El archivo `vercel.json` incluye:
-- ✅ Builds para archivos estáticos y funciones
-- ✅ Routes para SPA y API
-- ✅ Headers de seguridad y CORS
-- ✅ Cache optimizado
+- ✅ Builds para archivos estáticos y 
+-ks
+- ✅ridad
 
-### **2. Serverless Functions:**
-```javascript
-// api/binance-proxy.js
-export default async function handler(req, res) {
-  // Lógica de proxy para Binance P2P
-}
+
+### **2*
+```bash
+NODE_ENV=p
 ```
 
-### **3. Variables de Entorno:**
-```json
-{
-  "env": {
-    "NODE_ENV": "production"
-  }
-}
-```
+#
+- *ther
+`
+- **Output Directory**: `.`
+
 
 ## 🔧 Pasos de Despliegue
 
-### **Opción 1: Deploy desde GitHub (Recomendado)**
+### **Opción 1: Deploy desde G
 1. Ve a [vercel.com](https://vercel.com)
-2. **"New Project"** → Conecta tu repositorio GitHub
+2. **"New Project"** → Importa tu repositorio GitHub
 3. **Framework Preset**: Other
-4. **Root Directory**: `.` (raíz del proyecto)
-5. **Build Command**: `echo 'Static site'` (opcional)
-6. **Output Directory**: `.` (raíz del proyecto)
-7. **Deploy**
+4. **Root Dir proyecto)
+*
 
-### **Opción 2: Vercel CLI**
+### **O
 ```bash
-# Instalar Vercel CLI
-npm i -g vercel
+# Instalar Verc
+
 
 # Deploy
+verl
+
+# Deploy a producción
 vercel --prod
 ```
 
-### **Opción 3: Drag & Drop**
-1. Crea un ZIP con estos archivos:
+### **Opción 3: Drag &
+1. Crea una carpetos:
    ```
    /
-   ├── static-app.html
+   ├── api/binxy.js
+   ├── vercel-app.html
    ├── vercel.json
-   ├── api/
-   │   └── binance-proxy.js
-   └── static/
-       ├── css/style.css
-       ├── js/binance-api.js
-       └── js/app-static.js
+   ├── package.json
+   └──)
    ```
-2. Arrastra el ZIP a Vercel
+l
 
-## 🎯 URLs de Acceso
+de Acceso
 
 Una vez desplegado:
 - `https://tu-proyecto.vercel.app/` → Aplicación principal
-- `https://tu-proyecto.vercel.app/app` → Alias del convertidor
 - `https://tu-proyecto.vercel.app/api/binance-proxy` → Función serverless
+vertidor
 
-## 📊 Características de Vercel
 
-### **✅ Ventajas de Vercel:**
-- **Edge Functions** - Ejecución global rápida
-- **Automatic HTTPS** - SSL incluido
-- **Git Integration** - Deploy automático en push
-- **Analytics** - Métricas de rendimiento incluidas
-- **Preview Deployments** - URL única para cada PR
 
-### **✅ Funcionalidades Implementadas:**
-- Obtiene datos directamente de Binance P2P API
-- Cache automático de 5 minutos
-- Fallback con datos realistas
-- Headers CORS configurados
-- Detección automática de plataforma
+### **✅ Funciones Serverless:**
+- Obtiene datos directamente de BinaI
+- Timeout de 10 segundos configurado
+- Headers CORS automáticos
+- Cache de 5 minutos
 
-## 🔒 Seguridad y Performance
+### **✅ Datos Reales:**
+- Precios en tiempo real desde Binance
+- Fallback automático en caso de error
+- Detección automática de plata
+
+### **✅ Funcionalidades Completas:**
+ USDT
+- Gráficos interactivos
+laro
+- Diseño responsive
+
+#rformance
 
 ### **Headers de Seguridad:**
 ```json
 {
-  "X-Frame-Options": "DENY",
-  "X-XSS-Protection": "1; mode=block",
-  "X-Content-Type-Options": "nosniff",
-  "Referrer-Policy": "strict-origin-when-cross-origin"
+ ,
+  "
+",
+  "Referrer-Policy": "stricin"
 }
 ```
 
-### **CORS Configuration:**
-```json
-{
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type"
-}
-```
-
-### **Cache Strategy:**
-- **Static files**: 1 año
-- **API responses**: 5 minutos
-- **HTML**: Sin cache (para actualizaciones)
-
-## 🚀 Optimizaciones de Vercel
-
-### **Edge Network:**
-- ✅ CDN global automático
-- ✅ Compresión Brotli/Gzip
-- ✅ HTTP/2 y HTTP/3 support
-- ✅ Smart caching
-
-### **Serverless Functions:**
-- ✅ Cold start optimization
-- ✅ Automatic scaling
-- ✅ 10s timeout configurado
-- ✅ Node.js runtime optimizado
+### **Cache Optimizado:**
+- **Assets estáticos**: 1 año
+-
+- *l
 
 ## 🧪 Testing Local
 
-### **Desarrollo con Vercel CLI:**
+### **Desarrollo con Vercel CL
 ```bash
-# Instalar dependencias
-npm install -g vercel
+ias
+npm install
 
 # Desarrollo local
 vercel dev
 
-# La app estará en: http://localhost:3000
-# API estará en: http://localhost:3000/api/binance-proxy
+# Probar función específica
+node test-vercel-
+
+# Visita: http://localhost:30
 ```
 
-### **Probar función individualmente:**
+### **Testing de la Función:**
 ```bash
-# Ejecutar test
-node test-vercel-function.js
+ss
+curl -X POST http:/\
+\
+  -d '{"asset":"USDT","fiat":"BOB"'
 ```
 
-## 📈 Monitoreo y Analytics
+## 📈 Monitoreo y Ana
 
-### **Vercel Analytics:**
-- Real User Monitoring (RUM)
-- Core Web Vitals
-- Function execution metrics
-- Error tracking
+### **Dashboard del:**
+- Visitas 
+less
+- Métricas de respuesta
 
-### **Function Logs:**
-```bash
-# Ver logs en tiempo real
-vercel logs --follow
+###al:**
 
-# Ver logs de función específica
-vercel logs --follow api/binance-proxy
+# Ver logs de funciones
+vercel s
+
+# Logs específicos de función
+ver
 ```
 
-## 🔧 Troubleshooting
+ooting
 
-### **Problema: Function timeout**
+### **Problema: Función no r*
 **Solución:**
-```json
-{
-  "functions": {
-    "api/binance-proxy.js": {
-      "maxDuration": 10
-    }
-  }
-}
-```
+1. Verificar logs en dashboaVercel
+2. Comprobar tims)
+age.json
 
-### **Problema: CORS errors**
-**Solución:** Verificar headers en `vercel.json` y función
+### **P
+**Solución:**
+1. Verificar headerson
+ión
+3. Revisar Origin headers
 
-### **Problema: Build errors**
-**Solución:** Verificar sintaxis de `vercel.json`
+###**
 
-## 🆚 Comparación: Vercel vs Netlify
+1. Verificar sintaxis
 
-| Característica | Vercel | Netlify |
-|----------------|--------|---------|
-| **Functions** | `/api/` directory | `netlify/functions/` |
-| **Config** | `vercel.json` | `netlify.toml` |
-| **Runtime** | Node.js (default) | Node.js + others |
-| **Cold Start** | ~50ms | ~100ms |
-| **Free Tier** | 100GB bandwidth | 100GB bandwidth |
-| **Analytics** | Included | Paid addon |
+3. Revisar dependencias
+
+## 🚀 O
+
+### **Performanc**
+- ✅ Edge Functions para baja tencia
+- ✅ CDN global automáti
+- ✅ Ca
+- ✅/3
+
+###*SEO:**
+
+- ✅ Meta tags optimizados
+- ✅ Structured data support
+
+## 📱 Mobile Optimization
+
+viles:
+- ✅ Responsive design
+
+- ✅ Fast loading
+- ✅ PWA ready
 
 ## 🎨 Customización
 
-### **Cambiar configuración:**
-Editar `vercel.json` para:
-- Modificar routes
-- Ajustar headers
-- Configurar redirects
-- Cambiar build settings
+Para personalizar la aplicación:
 
-### **Actualizar función:**
-Modificar `api/binance-proxy.js` para:
-- Cambiar lógica de proxy
-- Agregar nuevos endpoints
-- Modificar cache strategy
+1. **Colores y temas**: Editar `static/css`
+l.js`
+3. **API function**
+n`
 
-## 📱 Mobile & PWA
+## 🔄 Comparación con Netlify
 
-Vercel es ideal para PWAs:
-- ✅ Service Worker support
-- ✅ Manifest.json serving
-- ✅ Offline capabilities
-- ✅ Push notifications
+| Característica y |
+|----------------|------|
+| **Funciones** | `/api//` |
+|
+| **Deploy** | Git push aut|
+| **Performance** | Edge Functions | E |
+| **Pricing** | Generous 
 
-## 🌍 Multi-Region
+## 📞 Soporte
 
-Vercel despliega automáticamente en:
-- ✅ Americas (US East, US West)
-- ✅ Europe (London, Frankfurt)
-- ✅ Asia (Singapore, Tokyo)
+Si tienes problemaiegue:
+cel
+2. Comprobar consola del n
+3. Verificar configuraciónjson
+4. Consultar documentació
 
 ---
 
-¡Tu convertidor BOB → USDT funcionará perfectamente en Vercel con datos reales! 🎉
+¡Tu convertidor BOrcel! 🎉
 
-## 🔗 Enlaces Útiles
+## 🎯 Resultado Esperado
 
-- [Vercel Documentation](https://vercel.com/docs)
-- [Serverless Functions](https://vercel.com/docs/functions)
-- [Vercel CLI](https://vercel.com/docs/cli)
+Una vez desplegado en Vercel:
+- ✅ **Datos reales** (13.12nance
+
+- ✅s
+omática**utad abilid- ✅ **Escala
