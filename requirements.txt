@@ -5,8 +5,8 @@
 # HTTP requests
 requests>=2.25.1
 
-# Base de datos
-mysql-connector-python>=8.0.26
+# Base de datos PostgreSQL
+psycopg2-binary>=2.9.0
 
 # Aplicación web
 Flask>=2.0.1

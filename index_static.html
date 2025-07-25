@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convertidor BOB → USDT | Binance P2P</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <style>
+        /* Variables CSS para temas */
+        :root {
+          /* Tema Claro */
+          --bg-primary: #f8fafc;
+          --bg-secondary: #ffffff;
+          --bg-tertiary: #f1f5f9;
+          --text-primary: #1e293b;
+          --text-secondary: #64748b;
+          --text-muted: #94a3b8;
+          --border-color: #e2e8f0;
+          --accent-primary: #3b82f6;
+          --accent-secondary: #1d4ed8;
+          --success-color: #10b981;
+          --error-color: #ef4444;
+          --warning-color: #f59e0b;
+          --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+          --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+          --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        /* Tema Oscuro */
+        [data-theme="dark"] {
+          --bg-primary: #0f172a;
+          --bg-secondary: #1e293b;
+          --bg-tertiary: #334155;
+          --text-primary: #f1f5f9;
+          --text-secondary: #cbd5e1;
+          --text-muted: #94a3b8;
+          --border-color: #475569;
+          --accent-primary: #60a5fa;
+          --accent-secondary: #3b82f6;
+          --success-color: #34d399;
+          --error-color: #f87171;
+          --warning-color: #fbbf24;
+          --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+          --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+          --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+        }
+
+        /* Reset y base */
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          background-color: var(--bg-primary);
+          color: var(--text-primary);
+          line-height: 1.6;
+          transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 1rem;
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+          padding: 1.5rem 0;
+          border-bottom: 1px solid var(--border-color);
+          margin-bottom: 2rem;
+        }
+
+        .header-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .logo {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .logo i {
+          font-size: 2rem;
+          color: var(--accent-primary);
+        }
+
+        .logo h1 {
+          font-size: 1.875rem;
+          font-weight: 700;
+          color: var(--text-primary);
+        }
+
+        .header-controls {
+          display: flex;
+          gap: 0.75rem;
+        }
+
+        .theme-toggle,
+        .refresh-btn {
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-color);
+          color: var(--text-secondary);
+          padding: 0.75rem;
+          border-radius: 0.5rem;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          font-size: 1rem;
+        }
+
+        .theme-toggle:hover,
+        .refresh-btn:hover {
+          background: var(--bg-tertiary);
+          color: var(--accent-primary);
+          transform: translateY(-1px);
+        }
+
+        /* Cards */
+        .card {
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-color);
+          border-radius: 1rem;
+          padding: 1.5rem;
+          margin-bottom: 1.5rem;
+          box-shadow: var(--shadow-sm);
+          transition: all 0.3s ease;
+        }
+
+        .card:hover {
+          box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1.5rem;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-header h2 {
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: var(--text-primary);
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .card-header i {
+          color: var(--accent-primary);
+        }
+
+        .timestamp {
+          font-size: 0.875rem;
+          color: var(--text-muted);
+        }
+
+        /* Rates Card */
+        .rates-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 1.5rem;
+          margin-bottom: 1rem;
+        }
+
+        .rate-item {
+          text-align: center;
+          padding: 1rem;
+          background: var(--bg-tertiary);
+          border-radius: 0.75rem;
+          transition: transform 0.2s ease;
+        }
+
+        .rate-item:hover {
+          transform: translateY(-2px);
+        }
+
+        .rate-label {
+          font-size: 0.875rem;
+          color: var(--text-secondary);
+          margin-bottom: 0.5rem;
+        }
+
+        .rate-value {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: var(--accent-primary);
+          margin-bottom: 0.25rem;
+        }
+
+        .rate-unit {
+          font-size: 0.75rem;
+          color: var(--text-muted);
+        }
+
+        .rate-source {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.875rem;
+          color: var(--text-secondary);
+          padding: 0.75rem;
+          background: var(--bg-tertiary);
+          border-radius: 0.5rem;
+        }
+
+        /* Converter Form */
+        .converter-form {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        .input-group {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .input-group label {
+          font-weight: 500;
+          color: var(--text-primary);
+        }
+
+        .input-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+        }
+
+        .input-prefix {
+          position: absolute;
+          left: 1rem;
+          color: var(--text-secondary);
+          font-weight: 500;
+          z-index: 1;
+        }
+
+        .input-wrapper input {
+          width: 100%;
+          padding: 1rem 1rem 1rem 3rem;
+          border: 1px solid var(--border-color);
+          border-radius: 0.5rem;
+          background: var(--bg-primary);
+          color: var(--text-primary);
+          font-size: 1rem;
+          transition: all 0.2s ease;
+        }
+
+        .input-wrapper input:focus {
+          outline: none;
+          border-color: var(--accent-primary);
+          box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+        }
+
+        /* Radio Group */
+        .rate-selector label {
+          margin-bottom: 0.75rem;
+        }
+
+        .radio-group {
+          display: flex;
+          gap: 1rem;
+        }
+
+        .radio-option {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          cursor: pointer;
+          padding: 0.75rem 1rem;
+          border: 1px solid var(--border-color);
+          border-radius: 0.5rem;
+          transition: all 0.2s ease;
+          flex: 1;
+        }
+
+        .radio-option:hover {
+          background: var(--bg-tertiary);
+        }
+
+        .radio-option input[type="radio"] {
+          display: none;
+        }
+
+        .radio-custom {
+          width: 1rem;
+          height: 1rem;
+          border: 2px solid var(--border-color);
+          border-radius: 50%;
+          position: relative;
+          transition: all 0.2s ease;
+        }
+
+        .radio-option input[type="radio"]:checked + .radio-custom {
+          border-color: var(--accent-primary);
+        }
+
+        .radio-option input[type="radio"]:checked + .radio-custom::after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 0.5rem;
+          height: 0.5rem;
+          background: var(--accent-primary);
+          border-radius: 50%;
+        }
+
+        .radio-option input[type="radio"]:checked ~ span {
+          color: var(--accent-primary);
+          font-weight: 500;
+        }
+
+        /* Convert Button */
+        .convert-btn {
+          background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+          color: white;
+          border: none;
+          padding: 1rem 2rem;
+          border-radius: 0.75rem;
+          font-size: 1rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+        }
+
+        .convert-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-lg);
+        }
+
+        .convert-btn:active {
+          transform: translateY(0);
+        }
+
+        .convert-btn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        /* Conversion Result */
+        .conversion-result {
+          margin-top: 1.5rem;
+          padding: 1.5rem;
+          background: linear-gradient(135deg, var(--success-color), #059669);
+          border-radius: 0.75rem;
+          color: white;
+        }
+
+        .result-header {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-weight: 600;
+          margin-bottom: 1rem;
+        }
+
+        .result-main {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 1rem;
+          margin-bottom: 1rem;
+          flex-wrap: wrap;
+        }
+
+        .result-bob {
+          font-size: 1.25rem;
+          font-weight: 600;
+        }
+
+        .result-arrow {
+          font-size: 1.5rem;
+          opacity: 0.8;
+        }
+
+        .result-usdt {
+          font-size: 1.5rem;
+          font-weight: 700;
+        }
+
+        .result-details {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 0.75rem;
+          font-size: 0.875rem;
+        }
+
+        .detail-item {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+
+        .detail-label {
+          opacity: 0.8;
+        }
+
+        .detail-value {
+          font-weight: 500;
+        }
+
+        /* Error Message */
+        .error-message {
+          margin-top: 1.5rem;
+          padding: 1rem;
+          background: var(--error-color);
+          color: white;
+          border-radius: 0.5rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        /* Quick Convert Buttons */
+        .quick-buttons {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+          gap: 0.75rem;
+        }
+
+        .quick-btn {
+          background: var(--bg-tertiary);
+          border: 1px solid var(--border-color);
+          color: var(--text-primary);
+          padding: 0.75rem 1rem;
+          border-radius: 0.5rem;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          font-weight: 500;
+        }
+
+        .quick-btn:hover {
+          background: var(--accent-primary);
+          color: white;
+          transform: translateY(-1px);
+        }
+
+        /* Chart Container */
+        .chart-container {
+          position: relative;
+          height: 400px;
+          background: var(--bg-primary);
+          border-radius: 0.5rem;
+          padding: 1rem;
+          margin-bottom: 1rem;
+        }
+
+        #priceChart {
+          width: 100% !important;
+          height: 100% !important;
+        }
+
+        .chart-placeholder {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          color: var(--text-muted);
+        }
+
+        .chart-placeholder i {
+          font-size: 3rem;
+          margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        .footer {
+          margin-top: auto;
+          padding: 2rem 0;
+          border-top: 1px solid var(--border-color);
+          text-align: center;
+          color: var(--text-secondary);
+        }
+
+        .footer p {
+          margin-bottom: 0.5rem;
+        }
+
+        .footer-note {
+          font-size: 0.875rem;
+          color: var(--text-muted);
+        }
+
+        /* Utility Classes */
+        .hidden {
+          display: none !important;
+        }
+
+        /* Animations */
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+
+        .loading {
+          animation: spin 1s linear infinite;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+          .container {
+            padding: 0 0.75rem;
+          }
+          
+          .header-content {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+          }
+          
+          .logo h1 {
+            font-size: 1.5rem;
+          }
+          
+          .rates-grid {
+            grid-template-columns: 1fr;
+          }
+          
+          .radio-group {
+            flex-direction: column;
+          }
+          
+          .result-main {
+            flex-direction: column;
+            gap: 0.5rem;
+          }
+          
+          .quick-buttons {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-exchange-alt"></i>
+                    <h1>BOB → USDT</h1>
+                </div>
+                <div class="header-controls">
+                    <button id="themeToggle" class="theme-toggle" title="Cambiar tema">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button id="refreshRates" class="refresh-btn" title="Actualizar tasas">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Current Rates Card -->
+            <div class="card rates-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-chart-line"></i> Tasas Actuales</h2>
+                    <span id="ratesTimestamp" class="timestamp">Actualizando...</span>
+                </div>
+                <div class="rates-grid">
+                    <div class="rate-item">
+                        <div class="rate-label">Precio Mínimo</div>
+                        <div id="minRate" class="rate-value">Bs. 6.85</div>
+                        <div class="rate-unit">BOB por USDT</div>
+                    </div>
+                    <div class="rate-item">
+                        <div class="rate-label">Precio Promedio</div>
+                        <div id="avgRate" class="rate-value">Bs. 6.95</div>
+                        <div class="rate-unit">BOB por USDT</div>
+                    </div>
+                </div>
+                <div class="rate-source">
+                    <i class="fas fa-info-circle"></i>
+                    <span id="rateSource">Fuente: Binance P2P (Demo)</span>
+                </div>
+            </div>
+
+            <!-- Converter Card -->
+            <div class="card converter-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-calculator"></i> Convertidor</h2>
+                </div>
+                <div class="converter-form">
+                    <div class="input-group">
+                        <label for="bobAmount">Cantidad en Bolivianos (BOB)</label>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">Bs.</span>
+                            <input type="number" id="bobAmount" placeholder="1000" min="0" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <div class="rate-selector">
+                        <label>Tipo de Tasa</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="rateType" value="avg" checked>
+                                <span class="radio-custom"></span>
+                                Precio Promedio
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="rateType" value="min">
+                                <span class="radio-custom"></span>
+                                Precio Mínimo
+                            </label>
+                        </div>
+                    </div>
+
+                    <button id="convertBtn" class="convert-btn">
+                        <i class="fas fa-exchange-alt"></i>
+                        Convertir
+                    </button>
+                </div>
+
+                <!-- Result -->
+                <div id="conversionResult" class="conversion-result hidden">
+                    <div class="result-header">
+                        <i class="fas fa-check-circle"></i>
+                        Resultado de la Conversión
+                    </div>
+                    <div class="result-content">
+                        <div class="result-main">
+                            <span id="resultBob" class="result-bob">Bs. 0</span>
+                            <i class="fas fa-arrow-right result-arrow"></i>
+                            <span id="resultUsdt" class="result-usdt">0 USDT</span>
+                        </div>
+                        <div class="result-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Tasa utilizada:</span>
+                                <span id="resultRate" class="detail-value">--</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Fuente:</span>
+                                <span id="resultSource" class="detail-value">Binance P2P</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Actualizado:</span>
+                                <span id="resultTimestamp" class="detail-value">Ahora</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div id="errorMessage" class="error-message hidden">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="errorText">Error desconocido</span>
+                </div>
+            </div>
+
+            <!-- Quick Convert Buttons -->
+            <div class="card quick-convert-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-bolt"></i> Conversión Rápida</h2>
+                </div>
+                <div class="quick-buttons">
+                    <button class="quick-btn" data-amount="100">Bs. 100</button>
+                    <button class="quick-btn" data-amount="500">Bs. 500</button>
+                    <button class="quick-btn" data-amount="1000">Bs. 1,000</button>
+                    <button class="quick-btn" data-amount="5000">Bs. 5,000</button>
+                    <button class="quick-btn" data-amount="10000">Bs. 10,000</button>
+                </div>
+            </div>
+
+            <!-- History Chart -->
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-chart-area"></i> Historial de Precios (Demo)</h2>
+                </div>
+                <div class="chart-container">
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>
+                <i class="fas fa-code"></i>
+                Convertidor BOB → USDT - Versión Demo para Netlify
+            </p>
+            <p class="footer-note">
+                <i class="fas fa-info-circle"></i>
+                Esta es una versión de demostración con datos simulados
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Aplicación estática para Netlify
+        class StaticConverter {
+            constructor() {
+                this.initializeElements();
+                this.initializeEventListeners();
+                this.initializeTheme();
+                this.loadSampleData();
+            }
+
+            initializeElements() {
+                this.themeToggle = document.getElementById('themeToggle');
+                this.refreshBtn = document.getElementById('refreshRates');
+                this.bobAmountInput = document.getElementById('bobAmount');
+                this.convertBtn = document.getElementById('convertBtn');
+                this.conversionResult = document.getElementById('conversionResult');
+                this.errorMessage = document.getElementById('errorMessage');
+                this.resultBob = document.getElementById('resultBob');
+                this.resultUsdt = document.getElementById('resultUsdt');
+                this.resultRate = document.getElementById('resultRate');
+                this.errorText = document.getElementById('errorText');
+                this.quickButtons = document.querySelectorAll('.quick-btn');
+                this.chartCanvas = document.getElementById('priceChart');
+            }
+
+            initializeEventListeners() {
+                this.themeToggle.addEventListener('click', () => this.toggleTheme());
+                this.refreshBtn.addEventListener('click', () => this.refreshRates());
+                this.convertBtn.addEventListener('click', () => this.performConversion());
+                this.bobAmountInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.performConversion();
+                });
+                this.bobAmountInput.addEventListener('input', () => this.validateInput());
+                
+                this.quickButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const amount = e.target.dataset.amount;
+                        this.bobAmountInput.value = amount;
+                        this.performConversion();
+                    });
+                });
+            }
+
+            initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                this.setTheme(savedTheme);
+            }
+
+            toggleTheme() {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                this.setTheme(newTheme);
+            }
+
+            setTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+                
+                const icon = this.themeToggle.querySelector('i');
+                if (theme === 'dark') {
+                    icon.className = 'fas fa-sun';
+                    this.themeToggle.title = 'Cambiar a modo claro';
+                } else {
+                    icon.className = 'fas fa-moon';
+                    this.themeToggle.title = 'Cambiar a modo oscuro';
+                }
+            }
+
+            loadSampleData() {
+                // Simular datos de ejemplo
+                this.currentRates = {
+                    min: 6.85 + (Math.random() - 0.5) * 0.1,
+                    avg: 6.95 + (Math.random() - 0.5) * 0.1
+                };
+                
+                document.getElementById('minRate').textContent = `Bs. ${this.currentRates.min.toFixed(2)}`;
+                document.getElementById('avgRate').textContent = `Bs. ${this.currentRates.avg.toFixed(2)}`;
+                document.getElementById('ratesTimestamp').textContent = 'Hace menos de 1 minuto';
+                
+                this.createSampleChart();
+            }
+
+            refreshRates() {
+                this.refreshBtn.classList.add('loading');
+                
+                setTimeout(() => {
+                    this.loadSampleData();
+                    this.refreshBtn.classList.remove('loading');
+                }, 1000);
+            }
+
+            validateInput() {
+                const amount = parseFloat(this.bobAmountInput.value);
+                const isValid = !isNaN(amount) && amount > 0;
+                this.convertBtn.disabled = !isValid;
+            }
+
+            performConversion() {
+                const amount = parseFloat(this.bobAmountInput.value);
+                
+                if (isNaN(amount) || amount <= 0) {
+                    this.showError('Por favor ingresa una cantidad válida mayor a 0');
+                    return;
+                }
+
+                const rateType = document.querySelector('input[name="rateType"]:checked').value;
+                const rate = rateType === 'min' ? this.currentRates.min : this.currentRates.avg;
+                const usdtAmount = amount / rate;
+
+                this.showConversionResult({
+                    bob_amount: amount,
+                    usdt_amount: usdtAmount,
+                    rate_used: rate,
+                    rate_type: rateType
+                });
+            }
+
+            showConversionResult(data) {
+                this.resultBob.textContent = `Bs. ${this.formatNumber(data.bob_amount)}`;
+                this.resultUsdt.textContent = `${data.usdt_amount.toFixed(8)} USDT`;
+                this.resultRate.textContent = `Bs. ${data.rate_used.toFixed(2)} por USDT (${data.rate_type === 'min' ? 'mínimo' : 'promedio'})`;
+                
+                this.conversionResult.classList.remove('hidden');
+                this.errorMessage.classList.add('hidden');
+                
+                this.conversionResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            showError(message) {
+                this.errorText.textContent = message;
+                this.errorMessage.classList.remove('hidden');
+                this.conversionResult.classList.add('hidden');
+            }
+
+            formatNumber(num) {
+                return new Intl.NumberFormat('es-BO').format(num);
+            }
+
+            createSampleChart() {
+                const ctx = this.chartCanvas.getContext('2d');
+                
+                // Generar datos de ejemplo
+                const labels = [];
+                const minPrices = [];
+                const avgPrices = [];
+                
+                for (let i = 23; i >= 0; i--) {
+                    const hour = new Date();
+                    hour.setHours(hour.getHours() - i);
+                    labels.push(hour.toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit' }));
+                    
+                    const variation = Math.sin(i * 0.3) * 0.05 + (Math.random() - 0.5) * 0.03;
+                    minPrices.push(6.85 + variation);
+                    avgPrices.push(6.95 + variation);
+                }
+
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                const textColor = isDark ? '#f1f5f9' : '#1e293b';
+                const gridColor = isDark ? '#475569' : '#e2e8f0';
+                const primaryColor = isDark ? '#60a5fa' : '#3b82f6';
+                const successColor = isDark ? '#34d399' : '#10b981';
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Precio Promedio',
+                                data: avgPrices,
+                                borderColor: primaryColor,
+                                backgroundColor: primaryColor + '20',
+                                borderWidth: 2,
+                                fill: false,
+                                tension: 0.4,
+                                pointRadius: 3,
+                                pointHoverRadius: 6
+                            },
+                            {
+                                label: 'Precio Mínimo',
+                                data: minPrices,
+                                borderColor: successColor,
+                                backgroundColor: successColor + '20',
+                                borderWidth: 2,
+                                fill: false,
+                                tension: 0.4,
+                                pointRadius: 3,
+                                pointHoverRadius: 6
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: isDark ? '#1e293b' : '#ffffff',
+                                titleColor: textColor,
+                                bodyColor: textColor,
+                                borderColor: gridColor,
+                                borderWidth: 1,
+                                cornerRadius: 8,
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.dataset.label}: Bs. ${context.parsed.y.toFixed(2)}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    color: gridColor,
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    color: textColor,
+                                    maxTicksLimit: 12
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    color: gridColor,
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    color: textColor,
+                                    callback: function(value) {
+                                        return 'Bs. ' + value.toFixed(2);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Inicializar aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            window.converter = new StaticConverter();
+            console.log('🚀 Convertidor BOB → USDT (Versión Estática) inicializado');
+        });
+    </script>
+</body>
+</html>
