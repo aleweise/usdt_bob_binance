@@ -1,4 +1,4 @@
-# Requisitos para scraping de Binance P2P
+# Requisitos para scraping de Binance P2P y aplicación web
 # Autor: GitHub Copilot
 # Fecha: Mayo 2025
 
@@ -7,3 +7,6 @@ requests>=2.25.1
 
 # Base de datos
 mysql-connector-python>=8.0.26
+
+# Aplicación web
+Flask>=2.0.1
