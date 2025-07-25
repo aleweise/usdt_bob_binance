@@ -1,9 +1,11 @@
 [build]
-  # Directorio de publicación
   publish = "."
-  
-  # Comando de build (no necesario para sitio estático)
   command = "echo 'Static site - no build required'"
+
+# Configuración de funciones Netlify
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
 
 # Configuración de redirects para SPA
 [[redirects]]
@@ -43,19 +45,7 @@
   [headers.values]
     Cache-Control = "public, max-age=3600"
 
-# Configuración de funciones Netlify
-[functions]
-  directory = "netlify/functions"
-  node_bundler = "esbuild"
-
-# Variables de entorno para funciones
-[context.production.environment]
-  NODE_ENV = "production"
-  
-[context.deploy-preview.environment]
-  NODE_ENV = "development"
-
-# Variables de entorno (ejemplo)
+# Variables de entorno
 [context.production.environment]
   NODE_ENV = "production"
   
