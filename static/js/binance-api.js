@@ -14,9 +14,10 @@ class BinanceP2PClient {
             this.proxyUrl = 'http://localhost:8888/.netlify/functions/binance-proxy';
             this.vercelProxyUrl = 'http://localhost:3000/api/binance-proxy';
         } else if (this.isVercel) {
-            // Producción en Vercel
+            // Producción en Vercel - múltiples endpoints
             this.proxyUrl = '/api/binance-proxy';
-            this.vercelProxyUrl = '/api/binance-proxy';
+            this.vercelProxyUrl = '/api/binance';
+            this.vercelTestUrl = '/api/test';
         } else if (this.isNetlify) {
             // Producción en Netlify
             this.proxyUrl = '/.netlify/functions/binance-proxy';
@@ -24,7 +25,8 @@ class BinanceP2PClient {
         } else {
             // Otros entornos - intentar ambos
             this.proxyUrl = '/.netlify/functions/binance-proxy';
-            this.vercelProxyUrl = '/api/binance-proxy';
+            this.vercelProxyUrl = '/api/binance';
+            this.vercelTestUrl = '/api/test';
         }
             
         this.directUrl = 'https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search';
@@ -60,6 +62,11 @@ class BinanceP2PClient {
             methods.push(() => this.getRatesViaVercelProxy());
         }
         
+        // Agregar endpoint de prueba si está disponible
+        if (this.vercelTestUrl) {
+            methods.push(() => this.testVercelConnection());
+        }
+        
         methods.push(() => this.getRatesDirectly());
         methods.push(() => this.getFallbackRates());
 
@@ -68,6 +75,7 @@ class BinanceP2PClient {
                 const methodNames = [];
                 if (this.proxyUrl) methodNames.push('Proxy Principal');
                 if (this.vercelProxyUrl && this.vercelProxyUrl !== this.proxyUrl) methodNames.push('Proxy Vercel');
+                if (this.vercelTestUrl) methodNames.push('Test Vercel');
                 methodNames.push('Directo', 'Fallback');
                 
                 console.log(`📡 Intento ${i + 1}: ${methodNames[i] || 'Método desconocido'}`);
@@ -193,6 +201,28 @@ class BinanceP2PClient {
             success: true,
             source: 'vercel_proxy'
         };
+    }
+
+    async testVercelConnection() {
+        if (!this.vercelTestUrl) {
+            throw new Error('Vercel test URL not available');
+        }
+
+        console.log('🧪 Testing Vercel connection...');
+        
+        const response = await fetch(this.vercelTestUrl, {
+            method: 'GET'
+        });
+
+        if (!response.ok) {
+            throw new Error(`Vercel test failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('✅ Vercel connection test successful:', data);
+        
+        // Si el test funciona, intentar el endpoint principal
+        throw new Error('Test successful but no rate data - trying other methods');
     }
 
     async getRatesDirectly() {
