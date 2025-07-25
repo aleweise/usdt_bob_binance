@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vercel dev",
     "dev:netlify": "netlify dev",
-    "build": "echo 'Static site - no build required'",
+    "build": "echo 'Build completed - static files ready'",
+    "vercel-build": "echo 'Vercel build completed'",
     "test": "echo 'No tests configured'",
     "test:vercel": "node test-vercel-function.js",
     "test:netlify": "node test-function.js"

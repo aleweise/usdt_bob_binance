@@ -1,3 +1,39 @@
 {
-  "version": 2
+  "version": 2,
+  "builds": [
+    {
+      "src": "static-app.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "static/**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/static-app.html"
+    },
+    {
+      "src": "/app",
+      "dest": "/static-app.html"
+    },
+    {
+      "src": "/converter",
+      "dest": "/static-app.html"
+    }
+  ]
 }
