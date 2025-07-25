@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convertidor BOB → USDT | Binance P2P (Vercel)</title>
+    <link rel="stylesheet" href="static/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-exchange-alt"></i>
+                    <h1>BOB → USDT</h1>
+                    <span class="platform-badge vercel">Vercel</span>
+                </div>
+                <div class="header-controls">
+                    <button id="themeToggle" class="theme-toggle" title="Cambiar tema">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button id="refreshRates" class="refresh-btn" title="Actualizar tasas">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Current Rates Card -->
+            <div class="card rates-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-chart-line"></i> Tasas Actuales</h2>
+                    <span id="ratesTimestamp" class="timestamp"></span>
+                </div>
+                <div class="rates-grid">
+                    <div class="rate-item">
+                        <div class="rate-label">Precio Mínimo</div>
+                        <div id="minRate" class="rate-value">--</div>
+                        <div class="rate-unit">BOB por USDT</div>
+                    </div>
+                    <div class="rate-item">
+                        <div class="rate-label">Precio Promedio</div>
+                        <div id="avgRate" class="rate-value">--</div>
+                        <div class="rate-unit">BOB por USDT</div>
+                    </div>
+                </div>
+                <div class="rate-source">
+                    <i class="fas fa-info-circle"></i>
+                    <span id="rateSource">Fuente: --</span>
+                </div>
+            </div>
+
+            <!-- Converter Card -->
+            <div class="card converter-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-calculator"></i> Convertidor</h2>
+                </div>
+                <div class="converter-form">
+                    <div class="input-group">
+                        <label for="bobAmount">Cantidad en Bolivianos (BOB)</label>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">Bs.</span>
+                            <input type="number" id="bobAmount" placeholder="1000" min="0" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <div class="rate-selector">
+                        <label>Tipo de Tasa</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="rateType" value="avg" checked>
+                                <span class="radio-custom"></span>
+                                Precio Promedio
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="rateType" value="min">
+                                <span class="radio-custom"></span>
+                                Precio Mínimo
+                            </label>
+                        </div>
+                    </div>
+
+                    <button id="convertBtn" class="convert-btn">
+                        <i class="fas fa-exchange-alt"></i>
+                        Convertir
+                    </button>
+                </div>
+
+                <!-- Result -->
+                <div id="conversionResult" class="conversion-result hidden">
+                    <div class="result-header">
+                        <i class="fas fa-check-circle"></i>
+                        Resultado de la Conversión
+                    </div>
+                    <div class="result-content">
+                        <div class="result-main">
+                            <span id="resultBob" class="result-bob">Bs. 0</span>
+                            <i class="fas fa-arrow-right result-arrow"></i>
+                            <span id="resultUsdt" class="result-usdt">0 USDT</span>
+                        </div>
+                        <div class="result-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Tasa utilizada:</span>
+                                <span id="resultRate" class="detail-value">--</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Fuente:</span>
+                                <span id="resultSource" class="detail-value">--</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Actualizado:</span>
+                                <span id="resultTimestamp" class="detail-value">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div id="errorMessage" class="error-message hidden">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="errorText">Error desconocido</span>
+                </div>
+            </div>
+
+            <!-- Quick Convert Buttons -->
+            <div class="card quick-convert-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-bolt"></i> Conversión Rápida</h2>
+                </div>
+                <div class="quick-buttons">
+                    <button class="quick-btn" data-amount="100">Bs. 100</button>
+                    <button class="quick-btn" data-amount="500">Bs. 500</button>
+                    <button class="quick-btn" data-amount="1000">Bs. 1,000</button>
+                    <button class="quick-btn" data-amount="5000">Bs. 5,000</button>
+                    <button class="quick-btn" data-amount="10000">Bs. 10,000</button>
+                </div>
+            </div>
+
+            <!-- History Chart -->
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-chart-area"></i> Historial de Precios (24h)</h2>
+                    <div class="chart-controls">
+                        <button id="chartRefresh" class="chart-refresh-btn" title="Actualizar gráfico">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <select id="chartTimeframe" class="chart-timeframe">
+                            <option value="24h">Últimas 24h</option>
+                            <option value="7d">Últimos 7 días</option>
+                            <option value="30d">Últimos 30 días</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="chartContainer" class="chart-container">
+                    <canvas id="priceChart"></canvas>
+                    <div id="chartLoading" class="chart-loading hidden">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Cargando datos del gráfico...</p>
+                    </div>
+                    <div id="chartError" class="chart-error hidden">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Error al cargar los datos del gráfico</p>
+                        <button id="chartRetry" class="chart-retry-btn">Reintentar</button>
+                    </div>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: var(--accent-primary);"></span>
+                        <span>Precio Promedio</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: var(--success-color);"></span>
+                        <span>Precio Mínimo</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>
+                <i class="fas fa-code"></i>
+                Convertidor BOB → USDT desplegado en Vercel
+            </p>
+            <p class="footer-note">
+                <i class="fas fa-info-circle"></i>
+                Datos en tiempo real desde Binance P2P via Vercel Functions
+            </p>
+        </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Procesando...</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="static/js/binance-api-universal.js"></script>
+    <script src="static/js/app-static.js"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
-// Cliente JavaScript para obtener datos de Binance P2P via Netlify Functions
-// Soluciona problemas de CORS usando proxy serverless
+// Cliente JavaScript universal para obtener datos de Binance P2P
+// Compatible con Netlify, Vercel y hosting estático
 
 class BinanceP2PClient {
     constructor() {
@@ -8,23 +8,22 @@ class BinanceP2PClient {
         this.isVercel = window.location.hostname.includes('vercel.app');
         this.isNetlify = window.location.hostname.includes('netlify.app');
         
-        // URLs para diferentes entornos y plataformas
+        // URLs para diferentes plataformas
+        this.proxyUrls = [];
+        
         if (this.isLocal) {
-            // Desarrollo local - intentar Netlify primero, luego Vercel
-            this.proxyUrl = 'http://localhost:8888/.netlify/functions/binance-proxy';
-            this.vercelProxyUrl = 'http://localhost:3000/api/binance-proxy';
+            // Desarrollo local - probar ambas opciones
+            this.proxyUrls = [
+                'http://localhost:3000/api/binance-proxy', // Vercel dev
+                'http://localhost:8888/.netlify/functions/binance-proxy' // Netlify dev
+            ];
         } else if (this.isVercel) {
-            // Producción en Vercel
-            this.proxyUrl = '/api/binance-proxy';
-            this.vercelProxyUrl = '/api/binance-proxy';
+            this.proxyUrls = ['/api/binance-proxy'];
         } else if (this.isNetlify) {
-            // Producción en Netlify
-            this.proxyUrl = '/.netlify/functions/binance-proxy';
-            this.vercelProxyUrl = null;
+            this.proxyUrls = ['/.netlify/functions/binance-proxy'];
         } else {
-            // Otros entornos - intentar ambos
-            this.proxyUrl = '/.netlify/functions/binance-proxy';
-            this.vercelProxyUrl = '/api/binance-proxy';
+            // Fallback para otros hostings
+            this.proxyUrls = ['/api/binance-proxy', '/.netlify/functions/binance-proxy'];
         }
             
         this.directUrl = 'https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search';
@@ -32,10 +31,9 @@ class BinanceP2PClient {
         this.cache = new Map();
         this.cacheTimeout = 5 * 60 * 1000; // 5 minutos
         
-        console.log(`🔧 Entorno: ${this.isLocal ? 'Local' : 'Producción'}`);
-        console.log(`🌐 Plataforma: ${this.isVercel ? 'Vercel' : this.isNetlify ? 'Netlify' : 'Genérico'}`);
-        console.log(`🔗 Proxy URL: ${this.proxyUrl}`);
-        if (this.vercelProxyUrl) console.log(`🔗 Vercel URL: ${this.vercelProxyUrl}`);
+        const platform = this.isVercel ? 'Vercel' : this.isNetlify ? 'Netlify' : this.isLocal ? 'Local' : 'Otro';
+        console.log(`🔧 Plataforma detectada: ${platform}`);
+        console.log(`🔗 Proxy URLs: ${this.proxyUrls.join(', ')}`);
     }
 
     async getRates() {
@@ -48,29 +46,20 @@ class BinanceP2PClient {
             return cached.data;
         }
 
-        // Intentar múltiples métodos según la plataforma
-        const methods = [];
-        
-        // Agregar métodos según la plataforma disponible
-        if (this.proxyUrl) {
-            methods.push(() => this.getRatesViaProxy());
-        }
-        
-        if (this.vercelProxyUrl && this.vercelProxyUrl !== this.proxyUrl) {
-            methods.push(() => this.getRatesViaVercelProxy());
-        }
-        
-        methods.push(() => this.getRatesDirectly());
-        methods.push(() => this.getFallbackRates());
+        // Intentar múltiples métodos
+        const methods = [
+            ...this.proxyUrls.map(url => () => this.getRatesViaProxy(url)),
+            () => this.getRatesDirectly(),
+            () => this.getFallbackRates()
+        ];
 
         for (let i = 0; i < methods.length; i++) {
             try {
-                const methodNames = [];
-                if (this.proxyUrl) methodNames.push('Proxy Principal');
-                if (this.vercelProxyUrl && this.vercelProxyUrl !== this.proxyUrl) methodNames.push('Proxy Vercel');
-                methodNames.push('Directo', 'Fallback');
-                
-                console.log(`📡 Intento ${i + 1}: ${methodNames[i] || 'Método desconocido'}`);
+                const methodName = i < this.proxyUrls.length 
+                    ? `Proxy ${this.proxyUrls[i]}` 
+                    : i === this.proxyUrls.length ? 'Directo' : 'Fallback';
+                    
+                console.log(`📡 Intento ${i + 1}: ${methodName}`);
                 const result = await methods[i]();
                 
                 if (result && result.success !== false) {
@@ -93,15 +82,7 @@ class BinanceP2PClient {
         return this.getEmergencyRates();
     }
 
-    async getRatesViaProxy() {
-        return this.makeProxyRequest(this.proxyUrl, 'netlify');
-    }
-
-    async getRatesViaVercelProxy() {
-        return this.makeProxyRequest(this.vercelProxyUrl, 'vercel');
-    }
-
-    async makeProxyRequest(url, platform) {
+    async getRatesViaProxy(proxyUrl) {
         const payload = {
             asset: "USDT",
             fiat: "BOB",
@@ -112,7 +93,7 @@ class BinanceP2PClient {
             publisherType: "merchant"
         };
 
-        const response = await fetch(url, {
+        const response = await fetch(proxyUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -121,19 +102,19 @@ class BinanceP2PClient {
         });
 
         if (!response.ok) {
-            throw new Error(`${platform} proxy responded with status: ${response.status}`);
+            throw new Error(`Proxy responded with status: ${response.status}`);
         }
 
         const data = await response.json();
         
         if (data.success === false && data.error) {
-            console.warn(`⚠️ ${platform} proxy devolvió error:`, data.error);
+            console.warn('⚠️ Proxy devolvió error:', data.error);
             // Si el proxy devuelve datos de fallback, usarlos
             if (data.usdt_min_bob && data.usdt_avg_bob) {
                 return {
                     ...data,
                     success: true,
-                    source: `${platform}_fallback`
+                    source: 'proxy_fallback'
                 };
             }
             throw new Error(data.error);
@@ -142,56 +123,8 @@ class BinanceP2PClient {
         return {
             ...data,
             success: true,
-            source: `${platform}_proxy`
-        };
-    }
-
-    async getRatesViaVercelProxy() {
-        if (!this.vercelProxyUrl) {
-            throw new Error('Vercel proxy URL not available');
-        }
-
-        const payload = {
-            asset: "USDT",
-            fiat: "BOB",
-            tradeType: "BUY",
-            page: 1,
-            rows: 10,
-            payTypes: [],
-            publisherType: "merchant"
-        };
-
-        const response = await fetch(this.vercelProxyUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
-
-        if (!response.ok) {
-            throw new Error(`Vercel proxy responded with status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        
-        if (data.success === false && data.error) {
-            console.warn('⚠️ Vercel proxy devolvió error:', data.error);
-            // Si el proxy devuelve datos de fallback, usarlos
-            if (data.usdt_min_bob && data.usdt_avg_bob) {
-                return {
-                    ...data,
-                    success: true,
-                    source: 'vercel_fallback'
-                };
-            }
-            throw new Error(data.error);
-        }
-
-        return {
-            ...data,
-            success: true,
-            source: 'vercel_proxy'
+            source: proxyUrl.includes('vercel') ? 'vercel_proxy' : 
+                   proxyUrl.includes('netlify') ? 'netlify_proxy' : 'proxy'
         };
     }
 

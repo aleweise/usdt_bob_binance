@@ -91,6 +91,25 @@ body {
   color: var(--text-primary);
 }
 
+.platform-badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+  text-transform: uppercase;
+}
+
+.platform-badge.vercel {
+  background: linear-gradient(135deg, #000000, #333333);
+  color: white;
+}
+
+.platform-badge.netlify {
+  background: linear-gradient(135deg, #00c7b7, #00a693);
+  color: white;
+}
+
 .header-controls {
   display: flex;
   gap: 0.75rem;

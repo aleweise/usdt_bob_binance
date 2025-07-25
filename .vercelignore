@@ -1,0 +1,64 @@
+# Archivos y directorios que Vercel debe ignorar
+
+# Node modules
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos de configuración de base de datos
+db_config.ini
+db_config_postgres.ini
+
+# Archivos de desarrollo
+test-function.js
+test-vercel-function.js
+
+# Archivos específicos de Netlify
+netlify/
+.netlify/
+
+# Archivos de Python (no necesarios para Vercel)
+*.py
+*.pyc
+__pycache__/
+venv/
+env/
+
+# Archivos de base de datos
+*.db
+*.sqlite
+*.sql
+
+# Archivos de sistema
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Archivos temporales
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Git
+.git/
+.gitignore
+
+# README específicos de otras plataformas
+NETLIFY_DEPLOY.md
+README_WEB.md

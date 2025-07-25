@@ -1,4 +1,4 @@
-# Configuración de base de datos (contiene credenciales sensibles)
+puede# Configuración de base de datos (contiene credenciales sensibles)
 db_config.ini
 
 # Entorno virtual de Python
@@ -88,3 +88,12 @@ instance/
 # Archivos de backup de base de datos
 *.sql.backup
 *.dump
+
+# Vercel
+.vercel
+.vercel.json
+
+# Netlify
+.netlify
+node_modules
+node_modules

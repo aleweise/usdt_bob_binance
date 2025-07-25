@@ -154,6 +154,13 @@ class StaticBOBUSDTConverter {
         
         const sourceMap = {
             'binance_realtime': 'Binance P2P (Tiempo Real)',
+            'proxy': 'Proxy Netlify',
+            'vercel_proxy': 'Proxy Vercel',
+            'proxy_fallback': 'Fallback Netlify',
+            'vercel_fallback': 'Fallback Vercel',
+            'binance_direct': 'Binance Directo',
+            'fallback_realistic': 'Datos de Respaldo',
+            'emergency': 'Datos de Emergencia',
             'fallback': 'Datos de Respaldo',
             'cache': 'Cache Local'
         };
@@ -209,6 +216,13 @@ class StaticBOBUSDTConverter {
         
         const sourceMap = {
             'binance_realtime': 'Binance P2P (Tiempo Real)',
+            'proxy': 'Proxy Netlify',
+            'vercel_proxy': 'Proxy Vercel',
+            'proxy_fallback': 'Fallback Netlify',
+            'vercel_fallback': 'Fallback Vercel',
+            'binance_direct': 'Binance Directo',
+            'fallback_realistic': 'Datos de Respaldo',
+            'emergency': 'Datos de Emergencia',
             'fallback': 'Datos de Respaldo',
             'cache': 'Cache Local'
         };

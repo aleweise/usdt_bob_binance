@@ -4,9 +4,12 @@
   "description": "Convertidor BOB → USDT con datos en tiempo real de Binance P2P",
   "main": "static-app.html",
   "scripts": {
-    "dev": "netlify dev",
+    "dev": "vercel dev",
+    "dev:netlify": "netlify dev",
     "build": "echo 'Static site - no build required'",
-    "test": "echo 'No tests configured'"
+    "test": "echo 'No tests configured'",
+    "test:vercel": "node test-vercel-function.js",
+    "test:netlify": "node test-function.js"
   },
   "dependencies": {
     "node-fetch": "^2.6.7"
